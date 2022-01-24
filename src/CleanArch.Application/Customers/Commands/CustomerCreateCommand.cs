@@ -1,5 +1,4 @@
-﻿
-using CleanArch.Application.Customers.Events;
+﻿using CleanArch.Application.Customers.Events;
 using MediatR;
 
 namespace CleanArch.Application.Customers.Commands

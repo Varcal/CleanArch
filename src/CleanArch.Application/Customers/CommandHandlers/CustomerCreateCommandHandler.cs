@@ -7,7 +7,7 @@ using CleanArch.Domain.Customers.Entities;
 using CleanArch.Domain.Customers.Interfaces.Repositories;
 using MediatR;
 
-namespace CleanArch.Application.Customers.Handlers
+namespace CleanArch.Application.Customers.CommandHandlers
 {
     public class CustomerCreateCommandHandler: IRequestHandler<CustomerCreateCommand, CustomerCreatedEvent>
     {
