@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using CleanArch.Data.Contexts;
 using CleanArch.Domain.Customers.Entities;

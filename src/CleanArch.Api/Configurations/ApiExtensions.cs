@@ -1,4 +1,5 @@
-﻿using CleanArch.Api.Configurations.OpenApi;
+﻿using System.Text.Json.Serialization;
+using CleanArch.Api.Configurations.OpenApi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -11,7 +12,11 @@ namespace CleanArch.Api.Configurations
         public static IServiceCollection AddApiConfiguration(this IServiceCollection services)
         {
             
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(opt =>
+            {
+                opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                opt.JsonSerializerOptions.WriteIndented = true;
+            });
             services.AddHealthChecks();
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, OpenApiOptionsConfig>();
             services.AddApiVersioning(options =>

@@ -23,7 +23,7 @@ namespace CleanArch.Api
 
             services.AddApiConfiguration()
                 .AddSwaggerConfig()
-                .AddApplication();
+                .AddApplication(Configuration);
             
         }
 
