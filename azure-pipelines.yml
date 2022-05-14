@@ -22,23 +22,29 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
-    - task: Docker@2
-      displayName: Docker Build
+    - task: DotNetCoreCLI@2
+      displayName: Build App
       inputs:
-        containerRegistry: '$(containerRegistry)'
-        repository: '$(repositoryName)'
         command: 'build'
-        Dockerfile: '**/Dockerfile'
-        tags: |
-          $(tag)
-          latest
-    - task: Docker@2
-      displayName: Docker Push
-      inputs:
-        containerRegistry: '$(containerRegistry)'
-        repository: '$(repositoryName)'
-        command: 'push'
-        tags: |
-          $(tag)
-          latest
+        projects: '**/*.csproj'
+
+    # - task: Docker@2
+    #   displayName: Docker Build
+    #   inputs:
+    #     containerRegistry: '$(containerRegistry)'
+    #     repository: '$(repositoryName)'
+    #     command: 'build'
+    #     Dockerfile: '**/Dockerfile'
+    #     tags: |
+    #       $(tag)
+    #       latest
+    # - task: Docker@2
+    #   displayName: Docker Push
+    #   inputs:
+    #     containerRegistry: '$(containerRegistry)'
+    #     repository: '$(repositoryName)'
+    #     command: 'push'
+    #     tags: |
+    #       $(tag)
+    #       latest
   
