@@ -10,6 +10,7 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
+  containerRegistry: 'Docker Hub'
   repositoryName: 'varcal/cleanarch'
 
 stages:
@@ -21,12 +22,35 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
-    - task: Docker@2
+    - task: DotNetCoreCLI@2
+      displayName: Build App
       inputs:
-        containerRegistry: 'Docker Hub'
-        repository: '$(repositoryName)'
-        command: 'buildAndPush'
-        Dockerfile: '**/Dockerfile'
-        tags: |
-          $(tag)
-          latest
+        command: 'build'
+        projects: '**/*.csproj'
+        
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'test'
+        projects: '**/tests/*.csproj'
+        testRunTitle: 'Unit Tests'
+
+    # - task: Docker@2
+    #   displayName: Docker Build
+    #   inputs:
+    #     containerRegistry: '$(containerRegistry)'
+    #     repository: '$(repositoryName)'
+    #     command: 'build'
+    #     Dockerfile: '**/Dockerfile'
+    #     tags: |
+    #       $(tag)
+    #       latest
+    # - task: Docker@2
+    #   displayName: Docker Push
+    #   inputs:
+    #     containerRegistry: '$(containerRegistry)'
+    #     repository: '$(repositoryName)'
+    #     command: 'push'
+    #     tags: |
+    #       $(tag)
+    #       latest
+  
