@@ -1,6 +1,6 @@
 - task: Docker@2
   inputs:
     containerRegistry: 'Docker Hub'
-    repository: 'Docker Hub'
+    repository: 'varcal-cleanarch'
     command: 'buildAndPush'
     Dockerfile: '**/Dockerfile'
