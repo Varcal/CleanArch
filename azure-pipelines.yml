@@ -23,6 +23,7 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - task: Docker@2
+      displayName: Docker Build
       inputs:
         containerRegistry: '$(containerRegistry)'
         repository: '$(repositoryName)'
@@ -32,6 +33,7 @@ stages:
           $(tag)
           latest
     - task: Docker@2
+      displayName: Docker Push
       inputs:
         containerRegistry: '$(containerRegistry)'
         repository: '$(repositoryName)'
