@@ -60,12 +60,13 @@ namespace CleanArch.Api.Configurations.OpenApi
 
             app.UseSwaggerUI(options =>
             {
+
+                if(provider is null) return;
+                
                 foreach (var description in provider.ApiVersionDescriptions)
                 {
                     options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
                 }
-
-                //options.InjectStylesheet("/swagger-ui/site.css");
             });
 
             return app;
