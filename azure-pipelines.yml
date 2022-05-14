@@ -10,6 +10,7 @@ resources:
 
 variables:
   tag: '$(Build.BuildId)'
+  containerRegistry: 'Docker Hub'
   repositoryName: 'varcal/cleanarch'
 
 stages:
@@ -23,10 +24,19 @@ stages:
     steps:
     - task: Docker@2
       inputs:
-        containerRegistry: 'Docker Hub'
+        containerRegistry: '$(containerRegistry)'
         repository: '$(repositoryName)'
-        command: 'buildAndPush'
+        command: 'build'
         Dockerfile: '**/Dockerfile'
         tags: |
           $(tag)
           latest
+    - task: Docker@2
+      inputs:
+        containerRegistry: '$(containerRegistry)'
+        repository: '$(repositoryName)'
+        command: 'push'
+        tags: |
+          $(tag)
+          latest
+  
