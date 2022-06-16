@@ -1,20 +1,40 @@
-using Microsoft.AspNetCore.Hosting;
+using CleanArch.Api.Configurations;
+using CleanArch.Api.Configurations.OpenApi;
+using CleanArch.Application.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-namespace CleanArch.Api
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-    }
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddLocalization();
+
+builder.Services.AddApiConfiguration()
+    .AddSwaggerConfig()
+    .AddApplication(builder.Configuration);
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
 }
+
+var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+
+app.UseOpenApiConfig(provider);
+
+app.UseHttpsRedirection();
+
+app.UseRouting();
+
+app.UseAuthorization();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
+
+await app.RunAsync();

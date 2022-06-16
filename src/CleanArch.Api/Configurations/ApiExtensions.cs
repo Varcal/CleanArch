@@ -17,6 +17,7 @@ namespace CleanArch.Api.Configurations
                 opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
                 opt.JsonSerializerOptions.WriteIndented = true;
             });
+
             services.AddHealthChecks();
             services.AddTransient<IConfigureOptions<SwaggerGenOptions>, OpenApiOptionsConfig>();
             services.AddApiVersioning(options =>

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Distributed;
+using StackExchange.Redis;
 
 namespace CleanArch.Cache
 {
     public class CacheService : ICacheService
     {
-        private readonly IDistributedCache _cache;
+        private readonly IDatabase _cache;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public CacheService(IDistributedCache cache)
+        public CacheService(IDatabase cache)
         {
             _cache = cache;
             _jsonSerializerOptions = new JsonSerializerOptions
@@ -21,9 +21,15 @@ namespace CleanArch.Cache
 
         public async Task<T> GetAsync<T>(string key) where T : class
         {
-            var json = await _cache.GetStringAsync(key);
+            if (!_cache.IsConnected(key))
+            {
+                return default;
+            } 
 
-            if (json == null) return default(T);
+            
+            var json = await _cache.StringGetAsync(key);
+
+            if (json.HasValue) return default(T);
 
             var obj = JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions);
 
@@ -32,16 +38,25 @@ namespace CleanArch.Cache
 
         public async Task SetAsync(string key, object obj, int expiresIn)
         {
+            if (!_cache.IsConnected(key))
+            {
+                return;
+            }
+
             var json = JsonSerializer.Serialize(obj, _jsonSerializerOptions);
 
-            await _cache.SetStringAsync(key, json, new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(expiresIn) });
+            await _cache.StringSetAsync(key, json, TimeSpan.FromMinutes(15));
         }
 
         public T Get<T>(string key) where T : class
         {
-            var json = _cache.GetString(key);
+            if (!_cache.IsConnected(key))
+            {
+                return default;
+            }
 
-            if (json == null) return default(T);
+            var json = _cache.StringGet(key);
+            if (json.HasValue) return default(T);
 
             var obj = JsonSerializer.Deserialize<T>(json, _jsonSerializerOptions);
 
@@ -50,9 +65,14 @@ namespace CleanArch.Cache
 
         public void Set(string key, object obj, int expiresIn)
         {
+            if (!_cache.IsConnected(key))
+            {
+                return;
+            }
+
             var json = JsonSerializer.Serialize(obj, _jsonSerializerOptions);
 
-            _cache.SetString(key, json, new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(expiresIn) });
+            _cache.StringSet(key, json, TimeSpan.FromMinutes(15));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using CleanArch.Application.Customers.Models;
 using CleanArch.Application.Customers.Queries;
@@ -23,20 +24,35 @@ namespace CleanArch.Application.Customers.QueryHandlers
         public async Task<CustomerModel> Handle(CustomerGetByIdQuery request, CancellationToken cancellationToken)
         {
             var customerKey = "CustomerKey";
-            var customerCache = await _cacheService.GetAsync<CustomerModel>(customerKey);
 
-            if (customerCache != null) return customerCache;
+            try
+            {
+                var customerCache = await _cacheService.GetAsync<CustomerModel>(customerKey);
 
-            var customer = await _customerRepository.GetByIdAsync(request.Id);
+                if (customerCache != null) return customerCache;
 
-            if (customer == null) return null;
+                var customer = await _customerRepository.GetByIdAsync(request.Id);
 
-            var model = new CustomerModel(customer);
+                if (customer == null) return null;
 
-            await _cacheService.SetAsync(customerKey, model, 1);
+                var model = new CustomerModel(customer);
 
-            return model;
+                await _cacheService.SetAsync(customerKey, model, 1);
 
+                return model;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                var customer = await _customerRepository.GetByIdAsync(request.Id);
+
+                if (customer == null) return null;
+
+                var model = new CustomerModel(customer);
+
+                return model;
+            }
+            
         }
     }
 }

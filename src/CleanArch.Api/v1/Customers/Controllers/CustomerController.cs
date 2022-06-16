@@ -40,7 +40,7 @@ namespace CleanArch.Api.v1.Customers.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(CustomerModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(CustomerModel), StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [SwaggerOperation(Summary = "Get customer by id")]
         [Route("{id:Guid}")]
         public async Task<IActionResult> GetById([FromRoute]Guid id)

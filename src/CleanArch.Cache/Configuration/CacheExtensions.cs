@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using StackExchange.Redis;
 
 namespace CleanArch.Cache.Configuration
 {
@@ -9,10 +12,9 @@ namespace CleanArch.Cache.Configuration
         {
             var conn = configuration.GetConnectionString("RedisConnection");
 
-            services.AddDistributedRedisCache(config =>
-            {
-                config.Configuration = conn;
-            });
+            var multiplex = ConnectionMultiplexer.Connect(conn);
+
+            services.AddSingleton(multiplex.GetDatabase());
 
             services.AddSingleton<ICacheService, CacheService>();
 
